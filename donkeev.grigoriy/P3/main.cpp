@@ -34,8 +34,6 @@ std::istream & reading(std::istream & input, int & target)
 }
 void readingRowsCols(std::istream & input, int * matrixSize)
 {
-  //rows
-  //cols
   reading(input, matrixSize[0]);
   if (!input)
   {
@@ -62,6 +60,79 @@ void readingMatrix(std::istream & input, int * matrix, const size_t rows, const 
   if (input || !input.eof())
   {
     throw std::out_of_range("Too much arguments");
+  }
+}
+bool isFinish(size_t lim_u, size_t lim_r, size_t lim_d, size_t lim_l)
+{
+  bool temp = lim_u == lim_r;
+  temp = temp && lim_u == lim_d;
+  temp = temp && lim_u == lim_l;
+  return temp;
+}
+void LFT_BOT_CLK(int * new_matrix, const size_t & rows, const size_t & cols)
+{ 
+  size_t lastVisitedUp = 0;
+  size_t lastVisitedDown = rows + 1;
+  size_t lastVisitedRight = cols + 1;
+  size_t lastVisitedLeft = 0;
+  size_t position = (rows - 1) * cols;
+  int minus_counter = 1;
+  //furst up
+  new_matrix[position] -= minus_counter;
+  ++minus_counter;
+  for (size_t i = 0; i < rows - 1; ++i)
+  {
+    position -= cols;
+    new_matrix[position] -= minus_counter;
+    ++minus_counter;
+  }
+  ++lastVisitedLeft;
+  while (true)
+  {
+    for (size_t i = 0; i < lastVisitedRight - lastVisitedLeft - 1; ++i)
+    {
+      position += 1;
+      new_matrix[position] -= minus_counter;
+      ++minus_counter;
+    }
+    ++lastVisitedUp;
+    if (lastVisitedDown - lastVisitedUp == 1)
+    {
+      return;
+    }
+    for (size_t i = 0; i < lastVisitedDown - lastVisitedUp - 1; ++i)
+    {
+      position += cols;
+      new_matrix[position] -= minus_counter;
+      ++minus_counter;
+    }
+    --lastVisitedRight;
+    if (lastVisitedRight - lastVisitedLeft == 1)
+    {
+      return;
+    }
+    for (size_t i = 0; i < lastVisitedRight - lastVisitedLeft - 1; ++i)
+    {
+      position -= 1;
+      new_matrix[position] -= minus_counter;
+      ++minus_counter;
+    }
+    --lastVisitedDown;
+    if (lastVisitedRight - lastVisitedLeft == 1)
+    {
+      return;
+    }
+    for (size_t i = 0; i < lastVisitedDown - lastVisitedUp - 1; ++i)
+    {
+      position -= cols;
+      new_matrix[position] -= minus_counter;
+      ++minus_counter;
+    }
+    ++lastVisitedLeft;
+    if (lastVisitedRight - lastVisitedLeft == 1)
+    {
+      return;
+    }
   }
 }
 int main(int argc, char ** argv)
@@ -128,6 +199,7 @@ int main(int argc, char ** argv)
     std::cerr << e.what() << '\n';
     return 2;
   }
+  LFT_BOT_CLK(matrix, rows, cols);
   if (argv[1][0] == '2')
   {
     delete [] matrix;
