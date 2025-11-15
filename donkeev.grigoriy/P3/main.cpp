@@ -32,6 +32,13 @@ std::istream & reading(std::istream & input, int & target)
 {
   return input >> target;
 }
+void outputToFile(std::ostream & output, int * matrix, const size_t rows, const size_t cols)
+{
+  for (size_t i = 0; i < rows * cols; ++i)
+  {
+    output << matrix[i] << ' ';
+  }
+}
 void readingRowsCols(std::istream & input, int * matrixSize)
 {
   reading(input, matrixSize[0]);
@@ -77,7 +84,6 @@ void LFT_BOT_CLK(int * new_matrix, const size_t & rows, const size_t & cols)
   size_t lastVisitedLeft = 0;
   size_t position = (rows - 1) * cols;
   int minus_counter = 1;
-  //furst up
   new_matrix[position] -= minus_counter;
   ++minus_counter;
   for (size_t i = 0; i < rows - 1; ++i)
@@ -200,6 +206,8 @@ int main(int argc, char ** argv)
     return 2;
   }
   LFT_BOT_CLK(matrix, rows, cols);
+  std::ofstream output(argv[3]);
+  outputToFile(output, matrix, rows, cols);
   if (argv[1][0] == '2')
   {
     delete [] matrix;
