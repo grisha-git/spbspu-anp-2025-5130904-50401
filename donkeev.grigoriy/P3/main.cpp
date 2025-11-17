@@ -176,7 +176,9 @@ namespace donkeev{
   {
     if (rows != cols)
     {
+      int * temp = matrix;
       matrix = cutMatrix(matrix, rows, cols);
+      delete [] temp;
     }
     size_t skipping = 1;
     for (size_t i = 0; i < cols - 1; ++i)
