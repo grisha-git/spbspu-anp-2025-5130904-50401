@@ -47,7 +47,6 @@ namespace donkeev{
     {
       output << "false";
     }
-    
   }
   void readingRowsCols(std::istream & input, int * matrixSize)
   {
