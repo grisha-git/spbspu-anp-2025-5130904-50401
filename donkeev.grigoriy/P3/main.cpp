@@ -254,16 +254,19 @@ int main(int argc, char ** argv)
   catch (const std::bad_alloc& e)
   {
     std::cerr << "Memory error\n";
+    delete [] tempMatrix2;
     return 2;
   }
   catch (const std::invalid_argument& e)
   {
     std::cerr << e.what() << '\n';
+    delete [] tempMatrix2;
     return 2;
   }
   catch (const std::out_of_range& e)
   {
     std::cerr << e.what() << '\n';
+    delete [] tempMatrix2;
     return 2;
   }
   int matrix2[rows * cols] = {};
@@ -271,12 +274,5 @@ int main(int argc, char ** argv)
   donkeev::LFT_BOT_CLK(matrix, rows, cols);
   bool lwr_tri_mtx = donkeev::LWR_TRI_MTX(matrix2, rows, cols);
   donkeev::outputToFile(output, matrix, rows, cols, lwr_tri_mtx);
-  if (argv[1][0] == '2')
-  {
-    delete [] matrix;
-  }
-  else
-  {
-    delete [] tempMatrix2;
-  }
+  delete [] matrix;
 }
