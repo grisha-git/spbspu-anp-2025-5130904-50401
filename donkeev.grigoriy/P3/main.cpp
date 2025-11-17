@@ -229,6 +229,12 @@ int main(int argc, char ** argv)
   }
   size_t rows = matrixSize[0];
   size_t cols = matrixSize[1];
+  std::ofstream output(argv[3]);
+  if (rows == 0 && cols == 0)
+  {
+    output << rows << ' ' << cols << ' ' << "false";
+    return 0;
+  }
   int tempMatrix1[rows * cols] = {};
   int * tempMatrix2 = nullptr;
   try
@@ -238,6 +244,7 @@ int main(int argc, char ** argv)
   catch(const std::bad_alloc &e)
   {
       std::cerr << e.what() << '\n';
+      return 2;
   }
   int * matrix = argv[1][0] == '1' ? tempMatrix1 : tempMatrix2;
   try
@@ -262,11 +269,14 @@ int main(int argc, char ** argv)
   int matrix2[rows * cols] = {};
   donkeev::copyMtx(matrix, rows, cols, matrix2);
   donkeev::LFT_BOT_CLK(matrix, rows, cols);
-  std::ofstream output(argv[3]);
   bool lwr_tri_mtx = donkeev::LWR_TRI_MTX(matrix2, rows, cols);
   donkeev::outputToFile(output, matrix, rows, cols, lwr_tri_mtx);
   if (argv[1][0] == '2')
   {
     delete [] matrix;
+  }
+  else
+  {
+    delete [] tempMatrix2;
   }
 }
