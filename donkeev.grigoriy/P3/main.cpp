@@ -165,7 +165,7 @@ namespace donkeev{
     int * cuttedMatrix = new int [minimum * minimum];
     for (size_t i = 0; i < minimum; ++i)
       {
-        for (size_t j = 0; j < minimum; ++j) 
+        for (size_t j = 0; j < minimum; ++j)
         {
           cuttedMatrix[i * minimum + j] = matrix[i * cols + j];
         }
