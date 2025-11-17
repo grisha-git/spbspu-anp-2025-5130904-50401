@@ -16,7 +16,7 @@ namespace donkeev{
     {
       if (argvCheck[1][i] < '0' || argvCheck[1][i] > '9')
       {
-        throw std::invalid_argument("First argument is not a number\n");;
+        throw std::invalid_argument("First argument is not a number\n");
       }
       ++i;
     }
@@ -42,7 +42,7 @@ namespace donkeev{
     if (answer == 1)
     {
       output << "true";
-    } 
+    }
     else
     {
       output << "false";
@@ -86,7 +86,7 @@ namespace donkeev{
     return temp;
   }
   void LFT_BOT_CLK(int * new_matrix, const size_t & rows, const size_t & cols)
-  { 
+  {
     size_t lastVisitedUp = 0;
     size_t lastVisitedDown = rows + 1;
     size_t lastVisitedRight = cols + 1;
@@ -163,12 +163,14 @@ namespace donkeev{
     rows = minimum;
     cols = minimum;
     int * cuttedMatrix = new int [minimum * minimum];
-    for (size_t i = 0; i < minimum; ++i) {
-          for (size_t j = 0; j < minimum; ++j) {
-              cuttedMatrix[i * minimum + j] = matrix[i * cols + j];
-          }
+    for (size_t i = 0; i < minimum; ++i)
+      {
+        for (size_t j = 0; j < minimum; ++j) 
+        {
+          cuttedMatrix[i * minimum + j] = matrix[i * cols + j];
+        }
       }
-    return cuttedMatrix; 
+    return cuttedMatrix;
   }
   bool LWR_TRI_MTX(int * matrix, size_t & rows, size_t & cols)
   {
@@ -188,7 +190,7 @@ namespace donkeev{
         }
         position += cols;
       }
-      ++skipping; 
+      ++skipping;
     }
     return true;
   }
@@ -237,7 +239,7 @@ int main(int argc, char ** argv)
   {
       std::cerr << e.what() << '\n';
   }
-  int * matrix = argv[1][0] == '1' ? tempMatrix1 : tempMatrix2; 
+  int * matrix = argv[1][0] == '1' ? tempMatrix1 : tempMatrix2;
   try
   {
     donkeev::readingMatrix(input, matrix, rows, cols);
