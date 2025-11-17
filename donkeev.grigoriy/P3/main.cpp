@@ -239,14 +239,17 @@ int main(int argc, char ** argv)
   }
   int tempMatrix1[rows * cols] = {};
   int * tempMatrix2 = nullptr;
-  try
+  if (argv[1][0] == '2')
   {
-    tempMatrix2 = new int [rows * cols];
-  }
-  catch(const std::bad_alloc &e)
-  {
-      std::cerr << e.what() << '\n';
-      return 2;
+    try
+    {
+      tempMatrix2 = new int [rows * cols];
+    }
+    catch(const std::bad_alloc &e)
+    {
+        std::cerr << e.what() << '\n';
+        return 2;
+    }
   }
   int * matrix = argv[1][0] == '1' ? tempMatrix1 : tempMatrix2;
   try
@@ -276,5 +279,8 @@ int main(int argc, char ** argv)
   donkeev::LFT_BOT_CLK(matrix, rows, cols);
   bool lwr_tri_mtx = donkeev::LWR_TRI_MTX(matrix2, rows, cols);
   donkeev::outputToFile(output, matrix, rows, cols, lwr_tri_mtx);
-  delete [] matrix;
+  if (argv[1][0] == '2')
+  {
+    delete [] matrix;
+  }
 }
