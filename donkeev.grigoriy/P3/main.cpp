@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+
 namespace donkeev
 {
   size_t inputProcessing(int argcCheck, char** argvCheck)
@@ -16,7 +17,7 @@ namespace donkeev
     while (argvCheck[1][i] != '\0')
     {
       if (argvCheck[1][i] < '0' || argvCheck[1][i] > '9')
-      { 
+      {
         return 3;
       }
       ++i;
@@ -246,11 +247,11 @@ int main(int argc, char** argv)
     }
     catch(const std::bad_alloc& e)
     {
-        std::cerr << e.what() << '\n';
-        return 2;
+      std::cerr << e.what() << '\n';
+      return 2;
     }
   }
-  int * matrix = argv[1][0] == '1' ? tempMatrix1 : tempMatrix2;
+  int* matrix = argv[1][0] == '1' ? tempMatrix1 : tempMatrix2;
   size_t checkingMatrixReading = donkeev::readingMatrix(input, matrix, rows, cols);
   if (checkingMatrixReading == 1)
   {
