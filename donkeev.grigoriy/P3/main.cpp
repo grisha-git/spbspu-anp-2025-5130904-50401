@@ -1,39 +1,41 @@
 #include <iostream>
 #include <fstream>
-namespace donkeev{
-  void inputProcessing(int argcCheck, char ** argvCheck)
+namespace donkeev
+{
+  size_t inputProcessing(int argcCheck, char** argvCheck)
   {
     if (argcCheck > 4)
     {
-      throw std::out_of_range("Too many arguments\n");
+      return 1;
     }
     else if (argcCheck < 4)
     {
-      throw std::out_of_range("Lack of arguments\n");
+      return 2;
     }
     size_t i = 0;
     while (argvCheck[1][i] != '\0')
     {
       if (argvCheck[1][i] < '0' || argvCheck[1][i] > '9')
-      {
-        throw std::invalid_argument("First argument is not a number\n");
+      { 
+        return 3;
       }
       ++i;
     }
     if (argvCheck[1][1] != '\0')
     {
-      throw std::out_of_range("First argument is out of range\n");
+      return 4;
     }
     if (argvCheck[1][0] != '1' && argvCheck[1][0] != '2')
     {
-      throw std::out_of_range("First argument is out of range\n");
+      return 4;
     }
+    return 0;
   }
-  std::istream & reading(std::istream & input, int & target)
+  std::istream& reading(std::istream& input, int& target)
   {
     return input >> target;
   }
-  void outputToFile(std::ostream & output, int * matrix, const size_t rows, const size_t cols, bool answer)
+  void outputToFile(std::ostream& output, int* matrix, const size_t rows, const size_t cols, bool answer)
   {
     for (size_t i = 0; i < rows * cols; ++i)
     {
@@ -48,35 +50,23 @@ namespace donkeev{
       output << "false";
     }
   }
-  void readingRowsCols(std::istream & input, int * matrixSize)
-  {
-    reading(input, matrixSize[0]);
-    if (!input)
-    {
-      throw std::invalid_argument("Input error");
-    }
-    reading(input, matrixSize[1]);
-    if (!input)
-    {
-      throw std::invalid_argument("Input error");
-    }
-  }
-  void readingMatrix(std::istream & input, int * matrix, const size_t rows, const size_t cols)
+  size_t readingMatrix(std::istream& input, int* matrix, const size_t rows, const size_t cols)
   {
     for (size_t i = 0; i < rows * cols; ++i)
     {
       reading(input, matrix[i]);
       if (!input)
       {
-        throw std::invalid_argument("Input error");
+        return 1;
       }
     }
     int try_value = 0;
     reading(input, try_value);
     if (input || !input.eof())
     {
-      throw std::out_of_range("Too much arguments");
+      return 2;
     }
+    return 0;
   }
   bool isFinish(size_t lim_u, size_t lim_r, size_t lim_d, size_t lim_l)
   {
@@ -85,7 +75,7 @@ namespace donkeev{
     temp = temp && lim_u == lim_l;
     return temp;
   }
-  void LFT_BOT_CLK(int * new_matrix, const size_t & rows, const size_t & cols)
+  void reducingMatrixSpirally(int* new_matrix, const size_t& rows, const size_t& cols)
   {
     size_t lastVisitedUp = 0;
     size_t lastVisitedDown = rows + 1;
@@ -150,19 +140,19 @@ namespace donkeev{
       }
     }
   }
-  void copyMtx(int * matrix, size_t rows, size_t cols, int * matrix2)
+  void copyMtx(int* matrix, size_t rows, size_t cols, int* matrix2)
   {
     for (size_t i = 0; i < rows * cols; ++i)
     {
       matrix2[i] = matrix [i];
     }
   }
-  int * cutMatrix(int * matrix, size_t rows, size_t cols)
+  int* cutMatrix(int* matrix, size_t rows, size_t cols)
   {
     size_t minimum = rows < cols ? rows : cols;
     rows = minimum;
     cols = minimum;
-    int * cuttedMatrix = new int [minimum * minimum];
+    int* cuttedMatrix = new int [minimum * minimum];
     for (size_t i = 0; i < minimum; ++i)
       {
         for (size_t j = 0; j < minimum; ++j)
@@ -172,11 +162,11 @@ namespace donkeev{
       }
     return cuttedMatrix;
   }
-  bool LWR_TRI_MTX(int * matrix, size_t & rows, size_t & cols)
+  bool isMatrixTriangular(int* matrix, size_t& rows, size_t& cols)
   {
     if (rows != cols)
     {
-      int * temp = matrix;
+      int* temp = matrix;
       matrix = cutMatrix(matrix, rows, cols);
       delete [] temp;
     }
@@ -197,20 +187,27 @@ namespace donkeev{
     return true;
   }
 }
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
-  try
+  size_t checkingInput = donkeev::inputProcessing(argc, argv);
+  if (checkingInput == 1)
   {
-    donkeev::inputProcessing(argc, argv);
-  }
-  catch (const std::out_of_range &e)
-  {
-    std::cout << e.what();
+    std::cerr << "Too many arguments\n";
     return 1;
   }
-  catch (const std::invalid_argument &e)
+  else if (checkingInput == 2)
   {
-    std::cout << e.what();
+    std::cerr << "Lack of arguments\n";
+    return 1;
+  }
+  else if (checkingInput == 3)
+  {
+    std::cerr << "First argument is not a number\n";
+    return 1;
+  }
+  else if (checkingInput == 4)
+  {
+    std::cerr << "First argument is out of range\n";
     return 1;
   }
   std::ifstream input(argv[2]);
@@ -219,18 +216,20 @@ int main(int argc, char ** argv)
     std::cout << "File error\n";
     return 2;
   }
-  int matrixSize[2] = {};
-  try
+  size_t rows = 0;
+  input >> rows;
+  if (!input)
   {
-    donkeev::readingRowsCols(input, matrixSize);
-  }
-  catch (std::invalid_argument& e)
-  {
-    std::cerr << e.what() << '\n';
+    std::cerr << "Input error\n";
     return 2;
   }
-  size_t rows = matrixSize[0];
-  size_t cols = matrixSize[1];
+  size_t cols = 0;
+  input >> cols;
+  if (!input)
+  {
+    std::cerr << "Input error\n";
+    return 2;
+  }
   std::ofstream output(argv[3]);
   if (rows == 0 && cols == 0)
   {
@@ -238,47 +237,38 @@ int main(int argc, char ** argv)
     return 0;
   }
   int tempMatrix1[rows * cols] = {};
-  int * tempMatrix2 = nullptr;
+  int* tempMatrix2 = nullptr;
   if (argv[1][0] == '2')
   {
     try
     {
       tempMatrix2 = new int [rows * cols];
     }
-    catch(const std::bad_alloc &e)
+    catch(const std::bad_alloc& e)
     {
         std::cerr << e.what() << '\n';
         return 2;
     }
   }
   int * matrix = argv[1][0] == '1' ? tempMatrix1 : tempMatrix2;
-  try
+  size_t checkingMatrixReading = donkeev::readingMatrix(input, matrix, rows, cols);
+  if (checkingMatrixReading == 1)
   {
-    donkeev::readingMatrix(input, matrix, rows, cols);
-  }
-  catch (const std::bad_alloc& e)
-  {
-    std::cerr << "Memory error\n";
+    std::cerr << "Input error\n";
     delete [] tempMatrix2;
     return 2;
   }
-  catch (const std::invalid_argument& e)
+  else if (checkingMatrixReading == 2)
   {
-    std::cerr << e.what() << '\n';
-    delete [] tempMatrix2;
-    return 2;
-  }
-  catch (const std::out_of_range& e)
-  {
-    std::cerr << e.what() << '\n';
+    std::cerr << "Too much arguments\n";
     delete [] tempMatrix2;
     return 2;
   }
   int matrix2[rows * cols] = {};
   donkeev::copyMtx(matrix, rows, cols, matrix2);
-  donkeev::LFT_BOT_CLK(matrix, rows, cols);
-  bool lwr_tri_mtx = donkeev::LWR_TRI_MTX(matrix2, rows, cols);
-  donkeev::outputToFile(output, matrix, rows, cols, lwr_tri_mtx);
+  donkeev::reducingMatrixSpirally(matrix, rows, cols);
+  bool lwrTriMtx = donkeev::isMatrixTriangular(matrix2, rows, cols);
+  donkeev::outputToFile(output, matrix, rows, cols, lwrTriMtx);
   if (argv[1][0] == '2')
   {
     delete [] matrix;
