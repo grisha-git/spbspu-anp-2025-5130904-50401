@@ -2,7 +2,14 @@
 #include <iomanip>
 #include <cctype>
 
-char* reduceSize(char* oldData, const size_t realSize)//readen+1
+namespace donkeev
+{
+  char* reduceSize(char* oldData, const size_t realSize);
+  char* getline(std::istream& input, size_t* size);
+  size_t differenceLetters(const char* const array, char* buffer, const size_t sizeOfBuffer);
+  char* changeRegister(const char* const array, char* changedArray, const size_t size);
+}
+char* donkeev::reduceSize(char* oldData, const size_t realSize)
 {
   char* temp = reinterpret_cast< char* > (malloc(sizeof(char) * realSize));
   for (size_t i = 0; i < realSize; ++i)
@@ -13,7 +20,7 @@ char* reduceSize(char* oldData, const size_t realSize)//readen+1
   free(oldData);
   return temp;
 }
-char* getline(std::istream& input, size_t* size)
+char* donkeev::getline(std::istream& input, size_t* size)
 {
   bool isSkipws = input.flags() & std::ios_base::skipws;
   if (isSkipws)
@@ -56,7 +63,7 @@ char* getline(std::istream& input, size_t* size)
   *size = readen + 1;
   return data;
 }
-size_t differenceLetters(const char* const array, char* buffer, const size_t sizeOfBuffer)
+size_t donkeev::differenceLetters(const char* const array, char* buffer, const size_t sizeOfBuffer)
 {
   size_t id = 0;
   size_t j = 0;
@@ -84,7 +91,7 @@ size_t differenceLetters(const char* const array, char* buffer, const size_t siz
   }
   return id + 1;
 }
-char* changeRegister(const char* const array, char* changedArray, const size_t size)
+char* donkeev::changeRegister(const char* const array, char* changedArray, const size_t size)
 {
   for (size_t i = 0; i < size; ++i)
   {
@@ -109,7 +116,7 @@ char* changeRegister(const char* const array, char* changedArray, const size_t s
 int main()
 {
   size_t size = 0;
-  char* array = getline(std::cin, &size);
+  char* array = donkeev::getline(std::cin, &size);
   if (array == nullptr)
   {
     std::cerr << "Memory error\n";
@@ -121,7 +128,7 @@ int main()
     std::cerr << "Memory error\n";
     return 1;
   }
-  size_t diflat = differenceLetters(array, buffer, size);
+  size_t diflat = donkeev::differenceLetters(array, buffer, size);
   free(buffer);
   std::cout << diflat << '\n';
   char* lowLetterArray = reinterpret_cast< char* > (malloc(sizeof(char) * size));
@@ -130,6 +137,6 @@ int main()
     std::cerr << "Memory error\n";
     return 1;
   }
-  lowLetterArray = changeRegister(array, lowLetterArray, size);
+  lowLetterArray = donkeev::changeRegister(array, lowLetterArray, size);
   std::cout << lowLetterArray << '\n';
 }
