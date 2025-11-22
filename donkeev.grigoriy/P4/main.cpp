@@ -1,6 +1,17 @@
 #include <iostream>
 #include <iomanip>
 
+char* reduceSize(char* oldData, const size_t realSize)//readen+1
+{
+  char* temp = reinterpret_cast< char* > (malloc(sizeof(char) * realSize));
+  for (size_t i = 0; i < realSize; ++i)
+  {
+    temp[i] = oldData[i];
+  }
+  temp[realSize - 1] = '\0';
+  free(oldData);
+  return temp;
+}
 char* getline(std::istream& input, size_t* size)
 {
   bool isSkipws = input.flags() & std::ios_base::skipws;
