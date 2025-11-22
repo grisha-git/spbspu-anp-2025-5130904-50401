@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <cctype>
 
 char* reduceSize(char* oldData, const size_t realSize)//readen+1
 {
@@ -55,16 +56,80 @@ char* getline(std::istream& input, size_t* size)
   *size = readen + 1;
   return data;
 }
+size_t differenceLetters(const char* const array, char* buffer, const size_t sizeOfBuffer)
+{
+  size_t id = 0;
+  size_t j = 0;
+  if (sizeOfBuffer == 1)
+  {
+    return 0;
+  }
+  for(size_t i = 0; i < sizeOfBuffer; ++i)
+  {
+    if (std::isalpha(array[i]))
+    {
+      buffer[id] = array[i];
+      char current = buffer[id];
+      ++id;
+      for (; j < sizeOfBuffer; ++j)
+      {
+        if (current == buffer[j])
+        {
+          buffer[id - 1] = '0';
+          --id;
+          j = sizeOfBuffer;
+        }
+      }
+    }
+  }
+  return id + 1;
+}
+char* changeRegister(const char* const array, char* changedArray, const size_t size)
+{
+  for (size_t i = 0; i < size; ++i)
+  {
+    if (std::isalpha(array[i]))
+    {
+      if (std::isupper(array[i]))
+      {
+        changedArray[i] = std::tolower(array[i]);
+      }
+      else
+      {
+        changedArray[i] = array[i];
+      }
+    }
+    else
+    {
+      changedArray[i] = array[i];
+    }
+  }
+  return changedArray;
+}
 int main()
 {
   size_t size = 0;
-
   char* array = getline(std::cin, &size);
   if (array == nullptr)
   {
     std::cerr << "Memory error\n";
     return 1;
   }
-  std::cout << array;
-  std::cout << size;
+  char* buffer = reinterpret_cast< char* > (malloc(sizeof(char) * size));
+  if (buffer == nullptr)
+  {
+    std::cerr << "Memory error\n";
+    return 1;
+  }
+  size_t diflat = differenceLetters(array, buffer, size);
+  free(buffer);
+  std::cout << diflat << '\n';
+  char* lowLetterArray = reinterpret_cast< char* > (malloc(sizeof(char) * size));
+  if (lowLetterArray == nullptr)
+  {
+    std::cerr << "Memory error\n";
+    return 1;
+  }
+  lowLetterArray = changeRegister(array, lowLetterArray, size);
+  std::cout << lowLetterArray << '\n';
 }
