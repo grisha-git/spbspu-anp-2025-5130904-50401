@@ -3,6 +3,7 @@
 
 namespace donkeev
 {
+  constexpr double PI = 3.14;
   struct point_t
   {
     double x, y;
@@ -54,6 +55,49 @@ namespace donkeev
     size_t size_;
     point_t pos_;
   };
+  class Circle : public Shape
+  {
+  public:
+    Circle(double, const point_t&);
+    ~Circle() override = default;
+    double getArea() const override;
+    rectangle_t getFrameRect() const override;
+    void move(const point_t&) override;
+    void move(const double, const double) override;
+    void scale(double) override;
+  private:
+    point_t center_;
+    double radius_;
+  };
+  Circle::Circle(double r, const point_t& c):
+    center_(c),
+    radius_(r)
+  {}
+  double Circle::getArea() const
+  {
+    return PI * radius_ * radius_;
+  }
+  rectangle_t Circle::getFrameRect() const
+  {
+    rectangle_t frame;
+    frame.pos = center_;
+    frame.height = radius_ * 2;
+    frame.height = radius_ * 2;
+    return frame;
+  }
+  void Circle::move(const point_t& d)
+  {
+    center_ = d;
+  }
+  void Circle::move(const double dx, const double dy)
+  {
+    center_.x += dx;
+    center_.y += dy;
+  }
+  void Circle::scale(double k)
+  {
+    radius_ *= k;
+  }
   Rectangle::Rectangle(const rectangle_t& rectangle):
     body(rectangle)
   {}
@@ -65,9 +109,9 @@ namespace donkeev
   {
     return body;
   }
-  void Rectangle::move(const point_t& target)
+  void Rectangle::move(const point_t& d)
   {
-    body.pos = target;
+    body.pos = d;
   }
   void Rectangle::move(const double dx, const double dy)
   {
