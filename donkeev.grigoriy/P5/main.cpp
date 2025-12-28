@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cmath>
+
 namespace donkeev
 {
   struct point_t
@@ -33,6 +35,25 @@ namespace donkeev
   private:
     rectangle_t body;
   };
+  class Polygon : public Shape
+  {
+  public:
+    Polygon(const point_t*, size_t size, const point_t&);
+    ~Polygon() override;
+    Polygon(const Polygon&);
+    Polygon& operator = (const Polygon&);
+    Polygon(Polygon&&);
+    Polygon& operator = (Polygon&&);
+    double getArea() const override;
+    rectangle_t getFrameRect() const override;
+    void move(const point_t&) override;
+    void move(const double, const double) override;
+    void scale(double) override;
+  private:
+    point_t* points_;
+    size_t size_;
+    point_t pos_;
+  };
   Rectangle::Rectangle(const rectangle_t& rectangle):
     body(rectangle)
   {}
@@ -58,7 +79,128 @@ namespace donkeev
     body.height *= k;
     body.width *= k;
   }
-  
+  Polygon::Polygon(const point_t* points, size_t size, const point_t& pos):
+    points_(size ? new point_t[size] : nullptr),
+    size_(size),
+    pos_(pos)
+  {
+    if (points_ == nullptr)
+    {
+      throw std::bad_alloc();
+    }
+    else if (size_ < 3)
+    {
+      delete [] points_;
+      throw std::logic_error("polygon contains more than 2 points");
+    }
+    for (size_t i = 0; i < size; ++i)
+    {
+      points_[i] = points[i];
+    }
+  }
+  Polygon::~Polygon()
+  {
+    delete [] points_;
+  }
+  Polygon::Polygon(const Polygon& v):
+    points_(new point_t[v.size_]),
+    size_(v.size_),
+    pos_(v.pos_)
+  {
+    for (size_t i = 0; i < size_; ++i)
+    {
+      points_[i] = v.points_[i];
+    }
+  }
+  Polygon& Polygon::operator = (const Polygon& v)
+  {
+    point_t* temp = new point_t [v.size_];
+    for (size_t i = 0; i < v.size_; ++i)
+    {
+      temp[i] = v.points_[i];
+    }
+    delete [] points_;
+    points_ = temp;
+    size_ = v.size_;
+    pos_ = v.pos_;
+    return *this;
+  }
+  Polygon::Polygon(Polygon&& v):
+    points_(v.points_),
+    size_(v.size_),
+    pos_(v.pos_)
+  {
+    v.points_ = nullptr;
+  }
+  Polygon& Polygon::operator = (Polygon&& v)
+  {
+    if (this == &v)
+    {
+      return *this;
+    }
+    delete [] points_;
+    points_ = v.points_;
+    size_ = v.size_;
+    pos_ = v.pos_;
+    v.points_ = nullptr;
+    return *this;
+  }
+  double Polygon::getArea() const
+  {
+    double area = 0.0;
+    for (size_t i = 0; i < size_; ++i)
+    {
+      size_t j = (i + 1) % size_;
+      area += points_[i].x * points_[j].y;
+      area -= points_[j].x * points_[i].y;
+    }
+    return std::abs(area) / 2.0;
+  }
+  rectangle_t Polygon::getFrameRect() const
+  {
+    double minx = points_[0].x;
+    double maxx = points_[0].x;
+    double miny = points_[0].y;
+    double maxy = points_[0].y;
+    for (size_t i = 0; i < size_; ++i)
+    {
+      minx = points_[i].x < minx ? points_[i].x : minx;
+      maxx = points_[i].x > maxx ? points_[i].x : maxx;
+      miny = points_[i].y < miny ? points_[i].y : miny;
+      maxy = points_[i].y > maxy ? points_[i].y : maxy;
+    }
+    rectangle_t frame;
+    frame.height = maxy - miny;
+    frame.width = maxx- minx;
+    frame.pos = point_t{frame.width * 0.5, frame.height * 0.5};
+    return frame;
+  }
+  void Polygon::move(const point_t& d)
+  {
+    pos_ = d;
+    double dx = d.x - pos_.x;
+    double dy = d.y - pos_.y;
+    move(dx, dy);
+  }
+  void Polygon::move(const double dx, const double dy)
+  {
+    pos_.x += dx;
+    pos_.y += dy;
+    for (size_t i = 0; i < size_; ++i)
+    {
+      points_[i].x += dx;
+      points_[i].y += dy;
+    }
+  }
+  void Polygon::scale(double k)
+  {
+    for (size_t i = 0; i < size_; ++i)
+    {
+      double dx = points_[i].x - pos_.x;
+      double dy = points_[i].y - pos_.y;
+      point_t newPoint = {pos_.x + dx * k, pos_.y + dy * k};
+    }
+  }
 }
 int main()
 {
