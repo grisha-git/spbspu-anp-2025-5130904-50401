@@ -69,35 +69,6 @@ namespace donkeev
     point_t center_;
     double radius_;
   };
-  Circle::Circle(double r, const point_t& c):
-    center_(c),
-    radius_(r)
-  {}
-  double Circle::getArea() const
-  {
-    return PI * radius_ * radius_;
-  }
-  rectangle_t Circle::getFrameRect() const
-  {
-    rectangle_t frame;
-    frame.pos = center_;
-    frame.height = radius_ * 2;
-    frame.height = radius_ * 2;
-    return frame;
-  }
-  void Circle::move(const point_t& d)
-  {
-    center_ = d;
-  }
-  void Circle::move(const double dx, const double dy)
-  {
-    center_.x += dx;
-    center_.y += dy;
-  }
-  void Circle::scale(double k)
-  {
-    radius_ *= k;
-  }
   Rectangle::Rectangle(const rectangle_t& rectangle):
     body(rectangle)
   {}
@@ -245,8 +216,58 @@ namespace donkeev
       point_t newPoint = {pos_.x + dx * k, pos_.y + dy * k};
     }
   }
+  Circle::Circle(double r, const point_t& c):
+    center_(c),
+    radius_(r)
+  {}
+  double Circle::getArea() const
+  {
+    return PI * radius_ * radius_;
+  }
+  rectangle_t Circle::getFrameRect() const
+  {
+    rectangle_t frame;
+    frame.pos = center_;
+    frame.height = radius_ * 2;
+    frame.height = radius_ * 2;
+    return frame;
+  }
+  void Circle::move(const point_t& d)
+  {
+    center_ = d;
+  }
+  void Circle::move(const double dx, const double dy)
+  {
+    center_.x += dx;
+    center_.y += dy;
+  }
+  void Circle::scale(double k)
+  {
+    radius_ *= k;
+  }
 }
 int main()
 {
-  
+  using namespace donkeev;
+  Shape** shapes = new Shape* [3];
+  shapes[0] = new Rectangle({7, 3, {2, 0}});
+  try
+  {
+    const size_t size = 4;
+    point_t* points = new point_t [size];
+    points[0] = point_t {1.0, 1.0};
+    points[1] = point_t {5.0, 1.0};
+    points[2] = point_t {4.0, 4.0};
+    points[3] = point_t {2.0, 4.0};
+    shapes[1] = new Polygon(points, size, {3.0, 2.5});
+  }
+  catch(const std::bad_alloc& e)
+  {
+    std::cerr << "memory error\n";
+  }
+  catch(const std::logic_error& e)
+  {
+    std::cerr << e.what() << '\n';
+  }
+  shapes[2] = new Circle(13.5, {4, 7});
 }
