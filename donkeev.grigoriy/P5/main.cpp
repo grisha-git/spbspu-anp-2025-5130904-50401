@@ -245,6 +245,23 @@ namespace donkeev
   {
     radius_ *= k;
   }
+  void isotropicScale(donkeev::Shape&, point_t, double);
+}
+void donkeev::isotropicScale(Shape& figure, point_t target, double k)
+{
+  rectangle_t first_rect = figure.getFrameRect();
+  point_t first_p = {0, 0};
+  first_p.x = first_rect.pos.x + first_rect.width; 
+  first_p.y = first_rect.pos.y - first_rect.height;
+  figure.move(target);
+  rectangle_t second_rect= figure.getFrameRect();
+  point_t second_p = {0, 0};
+  second_p.x = second_rect.pos.x + second_rect.width; 
+  second_p.y = second_rect.pos.y - second_rect.height;
+  double dx = second_p.x - first_p.x;
+  double dy = second_p.y - first_p.y;
+  figure.scale(k);
+  figure.move(dx * k, dy * k);
 }
 int main()
 {
@@ -270,4 +287,17 @@ int main()
     std::cerr << e.what() << '\n';
   }
   shapes[2] = new Circle(13.5, {4, 7});
+  point_t sclaePoint = {0.0, 0.0};
+  double k;
+  std::cin >> sclaePoint.x >> sclaePoint.y;
+  std::cin >> k;
+  if (!std::cin || k < 0)
+  {
+    std::cerr << "bad input\n";
+    return 1;
+  }
+  for (size_t i = 0; i < 3; ++i)
+  {
+    isotropicScale(*(shapes[i]), sclaePoint, k);
+  }
 }
