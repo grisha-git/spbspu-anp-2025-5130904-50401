@@ -263,10 +263,58 @@ void donkeev::isotropicScale(Shape& figure, point_t target, double k)
   figure.scale(k);
   figure.move(dx * k, dy * k);
 }
+void getCoordinates(double* coordinates, const donkeev::Shape* shape)
+{
+  double minx = shape->getFrameRect().pos.x - shape->getFrameRect().width / 2;
+  double maxx = minx + shape->getFrameRect().width;
+  double miny = shape->getFrameRect().pos.y - shape->getFrameRect().height / 2;
+  double maxy = miny + shape->getFrameRect().height;
+  coordinates[0] = minx;
+  coordinates[1] = maxx;
+  coordinates[2] = miny;
+  coordinates[3] = maxy;
+}
+void print(std::ostream& output, const donkeev::Shape* const * shape, const char* const* names, const size_t size)
+{
+  double sumArea = 0;
+  double coordinates[4] = {};
+  getCoordinates(coordinates, shape[0]);
+  double minx;
+  double maxx;
+  double miny;
+  double maxy;
+  for (size_t i = 0; i < size; ++i)
+  {
+    output << names[i] << '\n';
+    output << "Area: " << shape[i]->getArea() << '\n';
+    output << "Frame width: " << shape[i]->getFrameRect().width << '\n';
+    output << "Frame height: " << shape[i]->getFrameRect().height << '\n';
+    output << "Frame position (x): " << shape[i]->getFrameRect().pos.x << '\n';
+    output << "Frame position (y): " << shape[i]->getFrameRect().pos.y << '\n';
+    sumArea += shape[i]->getArea();
+    getCoordinates(coordinates, shape[i]);
+    minx = coordinates[0] < minx ? coordinates[0] : minx;
+    maxx = coordinates[1] > maxx ? coordinates[1] : maxx;
+    miny = coordinates[2] < miny ? coordinates[2] : miny;
+    maxy = coordinates[3] > maxy ? coordinates[3] : maxy;
+  }
+  double width = maxx - minx;
+  double height = maxy - miny;
+  donkeev::point_t position = {0, 0};
+  position.x = maxx - width / 2;
+  position.y = maxy - height / 2;
+  output << "Total area: " << sumArea << '\n';
+  output << "Total frame width: " << width << '\n';
+  output << "Total frame height: " << height << '\n';
+  output << "Total frame position (x): " << position.x << '\n';
+  output << "Frame position (y): " << position.y << '\n';
+}
 int main()
 {
   using namespace donkeev;
-  Shape** shapes = new Shape* [3];
+  const size_t shapesSize = 3;
+  Shape** shapes = new Shape* [shapesSize];
+  const char* names[shapesSize] = {"Rectangle", "Polygon", "Circle"};
   shapes[0] = new Rectangle({7, 3, {2, 0}});
   try
   {
@@ -287,6 +335,7 @@ int main()
     std::cerr << e.what() << '\n';
   }
   shapes[2] = new Circle(13.5, {4, 7});
+  print(std::cout, shapes, names, shapesSize);
   point_t sclaePoint = {0.0, 0.0};
   double k;
   std::cin >> sclaePoint.x >> sclaePoint.y;
@@ -300,4 +349,10 @@ int main()
   {
     isotropicScale(*(shapes[i]), sclaePoint, k);
   }
+  print(std::cout, shapes, names, shapesSize);
+  for (size_t i = 0; i < shapesSize; ++i)
+  {
+    delete [] shapes[i];
+  }
+  delete [] shapes;
 }
