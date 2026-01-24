@@ -222,7 +222,7 @@ namespace donkeev
     {
       double dx = points_[i].x - pos_.x;
       double dy = points_[i].y - pos_.y;
-      point_t newPoint = {pos_.x + dx * k, pos_.y + dy * k};
+      points_[i] = {pos_.x + dx * k, pos_.y + dy * k};
     }
   }
   Circle::Circle(double r, const point_t& c):
