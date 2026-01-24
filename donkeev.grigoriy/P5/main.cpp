@@ -71,7 +71,12 @@ namespace donkeev
   };
   Rectangle::Rectangle(const rectangle_t& rectangle):
     body(rectangle)
-  {}
+  {
+    if (rectangle.height < 0 || rectangle.width < 0)
+    {
+      throw std::invalid_argument("rectangle's sizes mustn't be less than zero");
+    }
+  }
   double Rectangle::getArea() const
   {
     return body.height * body.width;
@@ -91,19 +96,19 @@ namespace donkeev
   }
   void Rectangle::scale(double k)
   {
+    if (k < 0)
+    {
+      throw std::invalid_argument("k mustn't be less than zero");
+    }
     body.height *= k;
     body.width *= k;
   }
   Polygon::Polygon(const point_t* points, size_t size, const point_t& pos):
-    points_(size ? new point_t[size] : nullptr),
+    points_(new point_t[size]),
     size_(size),
     pos_(pos)
   {
-    if (points_ == nullptr)
-    {
-      throw std::bad_alloc();
-    }
-    else if (size_ < 3)
+    if (size_ < 3)
     {
       delete[] points_;
       throw std::logic_error("polygon contains more than 2 points");
@@ -209,6 +214,10 @@ namespace donkeev
   }
   void Polygon::scale(double k)
   {
+    if (k < 0)
+    {
+      throw std::invalid_argument("k mustn't be less than zero");
+    }
     for (size_t i = 0; i < size_; ++i)
     {
       double dx = points_[i].x - pos_.x;
@@ -219,7 +228,12 @@ namespace donkeev
   Circle::Circle(double r, const point_t& c):
     center_(c),
     radius_(r)
-  {}
+  {
+    if (r < 0)
+    {
+      throw std::invalid_argument("radius mustn't be less than zero");
+    }
+  }
   double Circle::getArea() const
   {
     return PI * radius_ * radius_;
@@ -243,6 +257,10 @@ namespace donkeev
   }
   void Circle::scale(double k)
   {
+    if (k < 0)
+    {
+      throw std::invalid_argument("k mustn't be less than zero");
+    }
     radius_ *= k;
   }
   void isotropicScale(donkeev::Shape&, point_t, double);
