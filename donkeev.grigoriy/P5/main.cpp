@@ -154,7 +154,7 @@ namespace donkeev
   }
   Polygon& Polygon::operator=(Polygon&& v)
   {
-    if (this == &v)
+    if (this == std::addressof(v))
     {
       return *this;
     }
@@ -240,11 +240,7 @@ namespace donkeev
   }
   rectangle_t Circle::getFrameRect() const
   {
-    rectangle_t frame;
-    frame.pos = center_;
-    frame.height = radius_ * 2;
-    frame.height = radius_ * 2;
-    return frame;
+    return rectangle_t{radius_ * 2, radius_ * 2, center_};
   }
   void Circle::move(const point_t& d)
   {
@@ -347,6 +343,7 @@ int main()
   catch (const std::bad_alloc& e)
   {
     std::cerr << "memory error\n";
+    return 1;
   }
   catch (const std::logic_error& e)
   {
