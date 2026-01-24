@@ -23,7 +23,7 @@ namespace donkeev
     virtual void move(const double, const double) = 0;
     virtual void scale(double) = 0;
   };
-  class Rectangle : public Shape
+  class Rectangle:public Shape
   {
   public:
     Rectangle(const rectangle_t&);
@@ -36,15 +36,15 @@ namespace donkeev
   private:
     rectangle_t body;
   };
-  class Polygon : public Shape
+  class Polygon:public Shape
   {
   public:
     Polygon(const point_t*, size_t size, const point_t&);
     ~Polygon() override;
     Polygon(const Polygon&);
-    Polygon& operator = (const Polygon&);
+    Polygon& operator=(const Polygon&);
     Polygon(Polygon&&);
-    Polygon& operator = (Polygon&&);
+    Polygon& operator=(Polygon&&);
     double getArea() const override;
     rectangle_t getFrameRect() const override;
     void move(const point_t&) override;
@@ -55,7 +55,7 @@ namespace donkeev
     size_t size_;
     point_t pos_;
   };
-  class Circle : public Shape
+  class Circle:public Shape
   {
   public:
     Circle(double, const point_t&);
@@ -105,7 +105,7 @@ namespace donkeev
     }
     else if (size_ < 3)
     {
-      delete [] points_;
+      delete[] points_;
       throw std::logic_error("polygon contains more than 2 points");
     }
     for (size_t i = 0; i < size; ++i)
@@ -115,7 +115,7 @@ namespace donkeev
   }
   Polygon::~Polygon()
   {
-    delete [] points_;
+    delete[] points_;
   }
   Polygon::Polygon(const Polygon& v):
     points_(new point_t[v.size_]),
@@ -127,14 +127,14 @@ namespace donkeev
       points_[i] = v.points_[i];
     }
   }
-  Polygon& Polygon::operator = (const Polygon& v)
+  Polygon& Polygon::operator=(const Polygon& v)
   {
     point_t* temp = new point_t [v.size_];
     for (size_t i = 0; i < v.size_; ++i)
     {
       temp[i] = v.points_[i];
     }
-    delete [] points_;
+    delete[] points_;
     points_ = temp;
     size_ = v.size_;
     pos_ = v.pos_;
@@ -147,13 +147,13 @@ namespace donkeev
   {
     v.points_ = nullptr;
   }
-  Polygon& Polygon::operator = (Polygon&& v)
+  Polygon& Polygon::operator=(Polygon&& v)
   {
     if (this == &v)
     {
       return *this;
     }
-    delete [] points_;
+    delete[] points_;
     points_ = v.points_;
     size_ = v.size_;
     pos_ = v.pos_;
@@ -320,17 +320,17 @@ int main()
   {
     const size_t size = 4;
     point_t* points = new point_t [size];
-    points[0] = point_t {1.0, 1.0};
-    points[1] = point_t {5.0, 1.0};
-    points[2] = point_t {4.0, 4.0};
-    points[3] = point_t {2.0, 4.0};
+    points[0] = point_t{1.0, 1.0};
+    points[1] = point_t{5.0, 1.0};
+    points[2] = point_t{4.0, 4.0};
+    points[3] = point_t{2.0, 4.0};
     shapes[1] = new Polygon(points, size, {3.0, 2.5});
   }
-  catch(const std::bad_alloc& e)
+  catch (const std::bad_alloc& e)
   {
     std::cerr << "memory error\n";
   }
-  catch(const std::logic_error& e)
+  catch (const std::logic_error& e)
   {
     std::cerr << e.what() << '\n';
   }
@@ -352,7 +352,7 @@ int main()
   print(std::cout, shapes, names, shapesSize);
   for (size_t i = 0; i < shapesSize; ++i)
   {
-    delete [] shapes[i];
+    delete[] shapes[i];
   }
-  delete [] shapes;
+  delete[] shapes;
 }
