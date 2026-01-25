@@ -364,7 +364,7 @@ int main()
   {
     for (size_t i = 0; i < shapesSize; ++i)
     {
-      delete[] shapes[i];
+      delete shapes[i];
     }
     delete[] shapes;
     std::cerr << "bad input\n";
@@ -377,7 +377,7 @@ int main()
   print(std::cout, shapes, names, shapesSize);
   for (size_t i = 0; i < shapesSize; ++i)
   {
-    delete[] shapes[i];
+    delete shapes[i];
   }
   delete[] shapes;
 }
