@@ -293,10 +293,10 @@ void print(std::ostream& output, const donkeev::Shape* const * shape, const char
   double sumArea = 0;
   double coordinates[4] = {};
   getCoordinates(coordinates, shape[0]);
-  double minx;
-  double maxx;
-  double miny;
-  double maxy;
+  double minx = coordinates[0];
+  double maxx = coordinates[1];
+  double miny = coordinates[2];
+  double maxy = coordinates[3];
   for (size_t i = 0; i < size; ++i)
   {
     output << names[i] << '\n';
@@ -342,12 +342,17 @@ int main()
   }
   catch (const std::bad_alloc& e)
   {
+    delete[] shapes[0];
+    delete[] shapes;
     std::cerr << "memory error\n";
     return 1;
   }
   catch (const std::logic_error& e)
   {
+    delete[] shapes[0];
+    delete[] shapes;
     std::cerr << e.what() << '\n';
+    return 1;
   }
   shapes[2] = new Circle(13.5, {4, 7});
   print(std::cout, shapes, names, shapesSize);
@@ -357,6 +362,11 @@ int main()
   std::cin >> k;
   if (!std::cin || k < 0)
   {
+    for (size_t i = 0; i < shapesSize; ++i)
+    {
+      delete[] shapes[i];
+    }
+    delete[] shapes;
     std::cerr << "bad input\n";
     return 1;
   }
