@@ -117,6 +117,7 @@ namespace donkeev
     {
       points_[i] = points[i];
     }
+    delete [] points;
   }
   Polygon::~Polygon()
   {
@@ -327,18 +328,18 @@ int main()
 {
   using namespace donkeev;
   const size_t shapesSize = 3;
+  const size_t polygonPointsSize = 4;
   Shape** shapes = new Shape* [shapesSize];
   const char* names[shapesSize] = {"Rectangle", "Polygon", "Circle"};
   shapes[0] = new Rectangle({7, 3, {2, 0}});
   try
   {
-    const size_t size = 4;
-    point_t* points = new point_t [size];
+    point_t* points = new point_t [polygonPointsSize];
     points[0] = point_t{1.0, 1.0};
     points[1] = point_t{5.0, 1.0};
     points[2] = point_t{4.0, 4.0};
     points[3] = point_t{2.0, 4.0};
-    shapes[1] = new Polygon(points, size, {3.0, 2.5});
+    shapes[1] = new Polygon(points, polygonPointsSize, {3.0, 2.5});
   }
   catch (const std::bad_alloc& e)
   {
